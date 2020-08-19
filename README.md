@@ -7,8 +7,9 @@ we additionally develop an R package `derandomKnock`, which will be constantly i
 out the R package unless their aim is to reproduce the examples of our paper.
 
 ## Folders
-- `R`: contains the code the implement the variable selection procedures。
-- `simulations`: contains the scripts the carry out the simulations.
-- `results`: stores the result.
+- `R/`: contains the main functions that implement the variable selection procedures。
+- `simulations/`: contains the scripts to carry out the simulations.
+- `results/`: stores the result.
+- `bash/`: bash files to run the simulations.
 
 ## Usage
