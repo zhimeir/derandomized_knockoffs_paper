@@ -13,7 +13,7 @@ out the R package if they want to want to use the procedure.
 - `bash/`: bash files to run the simulations.
 
 ## Usage
-### One run
+### Single run
 Each script in the `simulations/` folder implements one run of the simulation. The users can specify the amplitude and the seed when running the script. 
 For example, to implement one run of the small-scale experiment in Section 3 with amplitude 4 and seed 1, run the following command in your terminal:
 ```{r}

@@ -21,7 +21,7 @@ suppressPackageStartupMessages(library("glmnet"))
 suppressPackageStartupMessages(library("MASS"))
 suppressPackageStartupMessages(library("stabs"))
 
-file_vec <- c("crt","fwer_filter","getV","getOutput","vanilla_fwer_filter")
+file_vec <- c("crt","fwer_filter","getV","vanilla_fwer_filter")
 getfile <- sapply(paste0("../R/",file_vec,".R"),source)
 settingName <- "fwer_large"
 

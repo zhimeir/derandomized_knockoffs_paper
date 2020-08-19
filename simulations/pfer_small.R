@@ -22,7 +22,7 @@ suppressPackageStartupMessages(library("glmnet"))
 suppressPackageStartupMessages(library("MASS"))
 suppressPackageStartupMessages(library("stabs"))
 
-file_vec <- c("crt","pfer_filter","getV","getOutput","vanilla_pfer_filter")
+file_vec <- c("crt","pfer_filter","getV","vanilla_pfer_filter")
 getfile <- sapply(paste0("../R/",file_vec,".R"),source)
 settingName <- "pfer_small"
 

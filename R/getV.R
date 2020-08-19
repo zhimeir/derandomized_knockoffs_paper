@@ -1,15 +1,14 @@
-#' Stable knockoff(fdx)
-#' internal function to determine v
-#' 
-#' @export
-
-#Auxiliary functions
 getV <- function(k,alpha,accuracy = 0.05,tau = 0.5,
-                 h1,h2,nu,xi){
-  #number of grids
+                 h1, #from markov assumption on V
+                 h2, # from chebyshev assumption on V
+                 nu, # from chernoff assumption on V
+                 xi #from assumption on pi
+                 ){
+
+  ## The number of grids
   length = k*tau/accuracy
   
-  #calculating roots
+  ## Calculating roots
   vexp = root_exp(k = k,alpha=alpha,tau = tau,length = length,accuracy = accuracy,nu=nu)
   v1 = (k+h1)*(tau+xi)*alpha
   v2 = root_2(k = k,alpha=alpha,tau = tau,length = length,accuracy = accuracy,h2 = h2)
