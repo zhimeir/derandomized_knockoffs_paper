@@ -14,16 +14,16 @@ out the R package unless their aim is to reproduce the examples of our paper.
 
 ## Usage
 ### One run
-Each script in the `simulations/` folder implementss one run of the procedure. The users can specify the amplitude and the seed when running the script. 
+Each script in the `simulations/` folder implements one run of the simulation. The users can specify the amplitude and the seed when running the script. 
 For example, to implement one run of the small-scale experiment in Section 3 with amplitude 4 and seed 1, run the following command in your terminal:
 ```{r}
 Rscript ./simulations/pfer_small.R 4 1
 ```
 
 ### Multiple runs
-The results presented in the paper are averaged over multiple runs. The uses can use the bash file in `bash/` to automatically
+The results presented in the paper are averaged over multiple runs. The user can use the bash file in `bash/` to automatically
 implement multiple runs of the simulation. But note that it may take a long time if it is run on a laptop. To use the bash file,
 run the following code in  your terminal:
 ```{r}
-bash run_all.sh
+bash ./bash/run_all.sh
 ```
