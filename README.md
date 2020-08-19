@@ -7,9 +7,23 @@ we additionally develop an R package `derandomKnock`, which will be constantly i
 out the R package unless their aim is to reproduce the examples of our paper.
 
 ## Folders
-- `R/`: contains the main functions that implement the variable selection procedures。
+- `R/`: contains the main functions that implement the variable selection procedures.
 - `simulations/`: contains the scripts to carry out the simulations.
 - `results/`: stores the result.
 - `bash/`: bash files to run the simulations.
 
 ## Usage
+### One run
+Each script in the `simulations/` folder implementss one run of the procedure. The users can specify the amplitude and the seed when running the script. 
+For example, to implement one run of the small-scale experiment in Section 3 with amplitude 4 and seed 1, run the following command in your terminal:
+```{r}
+Rscript ./simulations/pfer_small.R 4 1
+```
+
+### Multiple runs
+The results presented in the paper are averaged over multiple runs. The uses can use the bash file in `bash/` to automatically
+implement multiple runs of the simulation. But note that it may take a long time if it is run on a laptop. To use the bash file,
+run the following code in  your terminal:
+```{r}
+bash run_all.sh
+```
