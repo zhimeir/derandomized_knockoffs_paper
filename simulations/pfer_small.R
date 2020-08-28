@@ -22,6 +22,29 @@ suppressPackageStartupMessages(library("glmnet"))
 suppressPackageStartupMessages(library("MASS"))
 suppressPackageStartupMessages(library("stabs"))
 
+## Get the current path
+get_repo_path <- function(){
+    repo <- here()
+    if (grepl("derandomized_knockoffs_paper", repo)){
+        root <- strsplit(repo, "derandomized_knockoffs_paper")[[1]][1]
+        return(paste0(root, "derandomized_knockoffs_paper/"))
+    }
+    repo <- getwd()
+    if (grepl("derandomized_knockoffs_paper", repo)){
+        root <- strsplit(repo, "derandomized_knockoffs_paper")[[1]][1]
+        return(paste0(root, "derandomized_knockoffs_paper/"))
+    }
+    ##     repo <- Sys.getenv("covid19path")
+    ##     if (grepl("derandomized_knockoffs_paper", repo)){
+    ##         root <- strsplit(repo, "derandomized_knockoffs_paper")[[1]][1]
+    ##         return(paste0(root, "derandomized_knockoffs_paper/"))
+    ##     }
+    stop("The derandomized_knockoffs_paper repo is not found!")
+}
+repo_path <- get_repo_path()
+setwd(repo_path)
+
+## Source utility functions
 file_vec <- c("crt","pfer_filter","getV","vanilla_pfer_filter")
 getfile <- sapply(paste0("../R/",file_vec,".R"),source)
 settingName <- "pfer_small"
