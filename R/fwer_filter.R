@@ -14,9 +14,12 @@ fwer_filter<- function(X,y,k = 1,alpha=0.1,M = 50, tau =0.5,
   }
 
   ## Determine the parameter of the base procedure
-  v0 <- getV(k,alpha,accuracy = 0.01,tau,xi = 2*tau, nu = 1, h1 = k,h2 = 1/2*k)
-  ## If tau is less than v0, take tau=v0
-  v0 <- max(v0,tau)
+  ##   v0 <- getV(k,alpha,accuracy = 0.01,tau,xi = 2*tau, nu = 1, h1 = k,h2 = 1/2*k)
+  if( (k==1) | (k>1 & 4*k*alpha<1) ){
+    v0 <- tau
+  }else{
+    v0 <- 4*k*alpha*tau
+  }
 
   ## Running derandomized knockoffs
   for (m in 1:M){
