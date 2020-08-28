@@ -87,18 +87,15 @@ V = sum(beta0[rej]==0)
 save_res <- rbind(save_res,c(power,V,"vkn"))
 cat("done.\n")
 ####################################
-## Computing CRT p-values and apply Bonforroni
+## Stability Selection
 ####################################
-cat("Running Bonferroni...")
-bin_pval = function(x,y){
-  res = t.test(x[y==0],x[y==1],alternative = "two.sided")
-  return(res$p.value)
-}
-p_val = apply(X=X,MARGIN = 2,FUN = bin_pval,y=y)
-rej = which(p_val<=k_target*alpha/p)
+res <- stabsel(X,y,fitfun = glmnet.lasso,
+               cutoff = 0.75,PFER = alpha*k_target)
+
+rej = res$selected
 power = sum(beta0[rej]!=0)/k
 V = sum(beta0[rej]==0)
 save_res <- rbind(save_res,c(power,V,"bonf"))
 savedir = paste0('../results/',settingName,'/res_amp_',as.character(amp),"_run_",as.character(ParamsRowIndex),'.csv')
-write.csv(save_res,savedir)
+write.csv(save_res,savedir,row.names = FALSE)
 cat("Done.")
