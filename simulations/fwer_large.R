@@ -1,15 +1,15 @@
 #!/usr/bin/env Rscript
-
 ## Start of problem independent section
 args <- commandArgs(trailingOnly = TRUE)
 amp <- as.integer(args[1])
 ParamsRowIndex <- as.integer(args[2])
 if(is.na(amp)==1){
-  amp <- 4
+  amp <- 6
 }
 if(is.na(ParamsRowIndex)==1){
   ParamsRowIndex <- 1
 }
+
 ####################################
 ## Libraries and sources
 ####################################
@@ -20,6 +20,7 @@ suppressPackageStartupMessages(library("corpcor"))
 suppressPackageStartupMessages(library("glmnet"))
 suppressPackageStartupMessages(library("MASS"))
 suppressPackageStartupMessages(library("stabs"))
+suppressPackageStartupMessages(library("here"))
 
 ## Get the current path
 get_repo_path <- function(){
@@ -33,11 +34,11 @@ get_repo_path <- function(){
         root <- strsplit(repo, "derandomized_knockoffs_paper")[[1]][1]
         return(paste0(root, "derandomized_knockoffs_paper/"))
     }
-    ##     repo <- Sys.getenv("covid19path")
-    ##     if (grepl("derandomized_knockoffs_paper", repo)){
-    ##         root <- strsplit(repo, "derandomized_knockoffs_paper")[[1]][1]
-    ##         return(paste0(root, "derandomized_knockoffs_paper/"))
-    ##     }
+    repo <- Sys.getenv("derandomKnockpath")
+    if (grepl("derandomized_knockoffs_paper", repo)){
+      root <- strsplit(repo, "derandomized_knockoffs_paper")[[1]][1]
+      return(paste0(root, "derandomized_knockoffs_paper/"))
+    }
     stop("The derandomized_knockoffs_paper repo is not found!")
 }
 repo_path <- get_repo_path()
@@ -52,73 +53,72 @@ settingName <- "fwer_large"
 ## Parameters
 ####################################
 set.seed(24601)
-n = 2000
-p = 1000
-k = 60
-rho = 0.2
-Sigma = toeplitz(rho^(0:(p-1)))
-M=30 #Sample number
-alpha=0.1
-k_target= 3
-nonzero = sample(1:p,k)
-beta0 = amp * (1:p %in% nonzero)*sign(rnorm(p,0,1))/sqrt(n)
-y.sample = function(X) rbinom(1,1,exp(X%*%beta0)/(1+exp(X%*%beta0)))
-seed = as.integer(amp*ParamsRowIndex)
+n <- 2000
+p <- 1000
+k <- 60
+rho <- 0.2
+Sigma <- toeplitz(rho^(0:(p-1)))
+M <- 30
+alpha <- 0.1
+k_target <- 3
+nonzero <- sample(1:p,k)
+beta0 <- amp * (1:p %in% nonzero)*sign(rnorm(p,0,1))/sqrt(n)
+y.sample <- function(X) rbinom(1,1,exp(X%*%beta0)/(1+exp(X%*%beta0)))
+seed <- as.integer(amp*ParamsRowIndex)
 
 ####################################
 ## Generating data
 ####################################
 set.seed(seed)
-X = matrix(rnorm(n*p),n) %*% chol(Sigma)
-y = apply(X,1,y.sample)
+X <- matrix(rnorm(n*p),n) %*% chol(Sigma)
+y <- apply(X,1,y.sample)
 
 ####################################
 ## derandomized knockoffs 
 ####################################
 cat("Running derandomized knockoffs...")
-tau = 0.5
-res = fwer_filter(X,y,k=k_target, M=M,tau = tau,alpha = alpha,
-                  knockoff_stat = stat.lasso_coefdiff_bin,
-                  mu = rep(0,p),
-                  Sigma = Sigma,seed = seed+24601)
-rej = res$S
-power = sum(beta0[rej]!=0)/k
-V = sum(beta0[rej]==0)
-pi = res$pi
+tau <- 0.5
+res <- fwer_filter(X,y,k=k_target,alpha=alpha,
+                   M=M,tau=tau,v0=0.6,
+                   knockoff_stat=stat.lasso_coefdiff_bin,
+                   mu=rep(0,p),Sigma = Sigma,seed = seed+24601)
+
+rej <- res$S
+power <- sum(beta0[rej]!=0)/k
+V <- sum(beta0[rej]==0)
+pi <- res$pi
 
 save_res <- data.frame(power = power, V=V, method = "dkn")
-
 savedir = paste0('../results/',settingName,'/pi_amp_',as.character(amp),"_run_",as.character(ParamsRowIndex),'.csv')
 write.csv(pi,savedir)
 
 savedir = paste0('../results/',settingName,'/mdl_amp_',as.character(amp),"_run_",as.character(ParamsRowIndex),'.csv')
 write.csv(nonzero,savedir)
-
 cat("done.\n")
 
 ####################################
 ## Vanilla knockoffs
 ####################################
 cat("Running vanilla knockoffs...")
-res = vanilla_fwer_filter(X,y,k=k_target,alpha=alpha,
+res <- vanilla_fwer_filter(X,y,k=k_target,alpha=alpha,
                           knockoff_stat = stat.lasso_coefdiff_bin,
-                          mu = rep(0,p),
-                          Sigma = Sigma,seed = seed+24601)
-rej = res$S
-power = sum(beta0[rej]!=0)/k
-V = sum(beta0[rej]==0)
+                          mu = rep(0,p),Sigma = Sigma,seed = seed+24601)
+rej <- res$S
+power <- sum(beta0[rej]!=0)/k
+V <- sum(beta0[rej]==0)
 save_res <- rbind(save_res,c(power,V,"vkn"))
 cat("done.\n")
+
 ####################################
 ## Stability Selection
 ####################################
 res <- stabsel(X,y,fitfun = glmnet.lasso,
                cutoff = 0.75,PFER = alpha*k_target)
 
-rej = res$selected
-power = sum(beta0[rej]!=0)/k
-V = sum(beta0[rej]==0)
+rej <- res$selected
+power <- sum(beta0[rej]!=0)/k
+V <- sum(beta0[rej]==0)
 save_res <- rbind(save_res,c(power,V,"bonf"))
-savedir = paste0('../results/',settingName,'/res_amp_',as.character(amp),"_run_",as.character(ParamsRowIndex),'.csv')
+savedir <- paste0('../results/',settingName,'/res_amp_',as.character(amp),"_run_",as.character(ParamsRowIndex),'.csv')
 write.csv(save_res,savedir,row.names = FALSE)
-cat("Done.")
+cat("done.")

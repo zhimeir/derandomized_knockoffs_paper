@@ -1,36 +1,32 @@
-fwer_filter<- function(X,y,k = 1,alpha=0.1,M = 50, tau =0.5, 
-                       knockoff_method = "gaussian",
-                       knockoff_stat = stat.glmnet_coefdiff,
-                       mu = NULL,Sigma =NULL,#parameter for gaussian knockoff
-                       pInit = NULL, Q = NULL,pEmit = NULL, #parameter for hmm knockoff
-                       seed = 24601){
+fwer_filter<- function(X,y,k,alpha,
+                       M,tau,v0,#parameters of the procedure
+                       knockoff_method="gaussian",
+                       knockoff_stat=stat.glmnet_coefdiff,
+                       mu=NULL,Sigma=NULL,diags=NULL,#parameter for gaussian knockoff
+                       pInit=NULL,Q=NULL,pEmit=NULL,#parameter for hmm knockoff
+                       seed=24601){
   ## Initialization
   set.seed(seed)
   n <- dim(X)[1]
   p <- dim(X)[2]
   pi <- rep(0,p)
   if(knockoff_method == "gaussian"){
-    diags <- knockoff::create.solve_asdp(Sigma)
+    if(is.null(diags)){
+      diags <- knockoff::create.solve_asdp(Sigma)
+    }
   }
 
-  ## Determine the parameter of the base procedure
-  ##   v0 <- getV(k,alpha,accuracy = 0.01,tau,xi = 2*tau, nu = 1, h1 = k,h2 = 1/2*k)
-  if( (k==1) | (k>1 & 4*k*alpha<1) ){
-    v0 <- tau
-  }else{
-    v0 <- 4*k*alpha*tau
-  }
-
-  ## Running derandomized knockoffs
+  ## Run derandomized knockoffs
   for (m in 1:M){
     v <- floor(v0)+rbinom(1,1,v0-floor(v0))
     if(knockoff_method == "gaussian"){
-      Xk <- create.gaussian(X,mu,Sigma,diag_s = diags)}
+      Xk <- create.gaussian(X,mu,Sigma,diag_s = diags)
+    }
     if(knockoff_method == "hmm"){
       Xk <- knockoffHMM(X, pInit, Q,pEmit,seed = seed+m)
     }
     W <- knockoff_stat(X,Xk,y)
-    order_w <- order(abs(W),decreasing = TRUE)
+    order_w <-  order(abs(W),decreasing = TRUE)
     sorted_w <- W[order_w]
     negid <- which(sorted_w<0)
     if(v>0){
