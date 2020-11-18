@@ -119,7 +119,7 @@ nlambda <- 30
 lambda_list <- rep(0,nlambda)
 for(i in 1:nlambda){
   Xnew <- matrix(rnorm(n*p),n) %*% chol(Sigma)
-  Ynew <- y.sample(X)
+  Ynew <- y.sample(Xnew)
   res <- cv.glmnet(Xnew,Ynew,family = "gaussian")
   lambda_list[i] <- res$lambda.min
 }

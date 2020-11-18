@@ -111,6 +111,26 @@ save_res <- rbind(save_res,c(power,V,"vkn"))
 cat("done.\n")
 
 ####################################
+## Computing CRT p-values and apply Bonforroni
+####################################
+cat("Running CRT...")
+nlambda <- 30
+lambda_list <- rep(0,nlambda)
+for(i in 1:nlambda){
+  Xnew <- matrix(rnorm(n*p),n) %*% chol(Sigma)
+  Ynew <- apply(Xnew,1,y.sample)
+  res <- cv.glmnet(Xnew,Ynew,family = "binomial")
+  lambda_list[i] <- res$lambda.min
+}
+lambda <- median(lambda_list)
+p_val = crt(X=X,Y=y,mu=rep(0,p),Sigma=Sigma,K=n_crt,lambda=lambda,family = "binomial")
+rej = which(p_val<=k_target*alpha/p)
+power = sum(beta0[rej]!=0)/k
+V = sum(beta0[rej]==0)
+save_res <- rbind(save_res,c(power,V,"crt"))
+cat("done.")
+
+####################################
 ## Stability Selection
 ####################################
 cat("Running stability selection...")
