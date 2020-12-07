@@ -1,5 +1,5 @@
 # derandomized_knockoffs_paper
-A repository to reproduce the numerical results in the [Derandomized Knockoffs]() paper. 
+A repository to reproduce the numerical results in the [Derandomized Knockoffs](https://arxiv.org/abs/2012.02717) paper. 
 
 ## Overview
 We provide the code to <em>exactly</em> reproduce the numerical results in Section 3-5 of the paper. Based on the  code,
