@@ -1,0 +1,9 @@
+Warning message:
+In `[<-.factor`(`*tmp*`, ri, value = "vkn") :
+  invalid factor level, NA generated
+Warning message:
+In `[<-.factor`(`*tmp*`, ri, value = "bonf") :
+  invalid factor level, NA generated
+Warning message:
+In `[<-.factor`(`*tmp*`, ri, value = "stabs") :
+  invalid factor level, NA generated

@@ -45,7 +45,7 @@ repo_path <- get_repo_path()
 setwd(repo_path)
 
 ## Source utility functions
-file_vec <- c("crt","pfer_filter","getV","vanilla_pfer_filter")
+file_vec <- c("crt","pfer_filter","vanilla_pfer_filter")
 getfile <- sapply(paste0("./R/",file_vec,".R"),source)
 settingName <- "pfer_small"
 
@@ -138,7 +138,9 @@ cat("Running Stability Selection...")
 res = stabsel(X,y,fitfun = lars.lasso,cutoff = 0.75,PFER = v0)
 rej = res$selected
 power = sum(beta0[rej]!=0)/k
+power
 V = sum(beta0[rej]==0)
+V
 save_res <- rbind(save_res,c(power,V,"stabs"))
 savedir <- paste0('./results/',settingName,'/res_amp_',as.character(amp),"_run_",as.character(ParamsRowIndex),'.csv')
 write.csv(save_res,savedir)

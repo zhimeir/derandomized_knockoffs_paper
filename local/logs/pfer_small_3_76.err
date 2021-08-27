@@ -1,0 +1,10 @@
+Warning message:
+In `[<-.factor`(`*tmp*`, ri, value = "vkn") :
+  invalid factor level, NA generated
+Warning message:
+In `[<-.factor`(`*tmp*`, ri, value = "bonf") :
+  invalid factor level, NA generated
+Warning message:
+In `[<-.factor`(`*tmp*`, ri, value = "stabs") :
+  invalid factor level, NA generated
+slurmstepd: error: Pid 5176 is still in the cpuset step cgroup.  It might be left uncleaned after the job.
