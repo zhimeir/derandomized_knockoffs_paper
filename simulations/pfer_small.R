@@ -108,7 +108,8 @@ res <- vanilla_pfer_filter(X,y,v0=v0,mu = rep(0,p),
 rej <- res$S
 power <- sum(beta0[rej]!=0)/k
 V <- sum(beta0[rej]==0)
-save_res <- rbind(save_res,c(power,V,"vkn"))
+new_res <- data.frame(power = power, V = V, method = "vkn")
+save_res <- rbind(save_res, new_res)
 cat("done.\n")
 
 ####################################
@@ -128,7 +129,8 @@ p_val = crt(X,y,mu = rep(0,p),Sigma=Sigma,K=n_crt,lambda=lambda,family="gaussian
 rej = which(p_val<=v0/p)
 power = sum(beta0[rej]!=0)/k
 V = sum(beta0[rej]==0)
-save_res <- rbind(save_res,c(power,V,"bonf"))
+new_res <- data.frame(power = power, V=V, method = "bonf")
+save_res <- rbind(save_res, new_res)
 cat("done.\n")
 
 ####################################
@@ -138,10 +140,13 @@ cat("Running Stability Selection...")
 res = stabsel(X,y,fitfun = lars.lasso,cutoff = 0.75,PFER = v0)
 rej = res$selected
 power = sum(beta0[rej]!=0)/k
-power
 V = sum(beta0[rej]==0)
-V
-save_res <- rbind(save_res,c(power,V,"stabs"))
-savedir <- paste0('./results/',settingName,'/res_amp_',as.character(amp),"_run_",as.character(ParamsRowIndex),'.csv')
+new_res <- data.frame(power = power, V = V, method = "stabs")
+save_res <- rbind(save_res, new_res)
+cat("done.\n")
+
+## Store the final results
+savedir <- sprintf("./results/%s/res_amp_%d_run_%d.csv", settingName, amp, ParamsRowIndex)
+cat(sprintf("Results stored to %s...", savedir))
 write.csv(save_res,savedir)
 cat("done.")
